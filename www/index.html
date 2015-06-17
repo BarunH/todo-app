@@ -14,6 +14,7 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
+
     <script src="lib/firebase/firebase.js"></script>
     <script src="lib/firebase/angularfire.min.js"></script>
     
@@ -29,18 +30,18 @@
 
     <ion-pane>
       <ion-header-bar class="bar-dark">
-        <h1 class="title">Todo</h1>
+        <h1 class="title">Todo </h1>
         <button class="button button-balanced icon ion-plus" ng-click="addTodo()"></button>
 
       </ion-header-bar>
-      <ion-content>
+      <ion-content has-bouncing="true">
       <pre ng-hide="true">{{data}}</pre>
         <ion-list>
           <ion-item ng-repeat="todo in data.todos" class="item-checkbox" on-hold="showActions($index)">
             <label class="checkbox checkbox-positive">
-              <input type="checkbox" ng-model="todo.done">  
+              <input type="checkbox" ng-model="todo.done" ng-change="changed($index)">  
             </label>
-            {{todo.text}}
+            <span ng-class="{done:todo.done}">{{todo.text}}</span>
           </ion-item>
         </ion-list>
       </ion-content>

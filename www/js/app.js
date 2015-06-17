@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic','firebase'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -17,14 +17,20 @@ angular.module('starter', ['ionic'])
     }
   })
 })
-.controller('TodoListCtrl', function($scope,$ionicPopup,$ionicActionSheet,$timeout){
+.factory("Todos",function($firebaseArray){
+  var baseRef = new Firebase('https://sweltering-inferno-42.firebaseio.com/todos');
+  return $firebaseArray(baseRef);
+})
+.controller('TodoListCtrl', function(Todos,$scope,$ionicPopup,$ionicActionSheet,$timeout){
   
   $scope.data = {};
 
-  $scope.data.todos = [
-    {text : 'Write Test cases'}, 
-    {text: 'Implement WSFs'}
-  ];
+  $scope.data.todos = Todos;
+  //Todos.$bindTo($scope,"data.todos");
+
+  $scope.changed = function(index){
+     Todos.$save(index);
+  }
 
   $scope.addTodo = function(){
     var addPopup = $ionicPopup.show({
@@ -51,7 +57,7 @@ angular.module('starter', ['ionic'])
     });
     addPopup.then(function(newTodo) {
       if(!newTodo) return;
-      $scope.data.todos.push({
+      Todos.$add({
         text: newTodo
       });
     });
@@ -77,7 +83,7 @@ angular.module('starter', ['ionic'])
 
       hideSheet();
       if(confirm('do you really want to delete this?')){
-        todos.splice(todoIndex,1);
+        todos.$remove(todoIndex,1);
       }
     }, 
     buttonClicked: function(index) {
@@ -111,16 +117,14 @@ angular.module('starter', ['ionic'])
       editPopup.then(function(editTodo) {
         if(!editTodo) return;
         $scope.data.todos[todoIndex].text = editTodo;
+        Todos.$save(todoIndex);
       });
 
 
       return true;
     }
 
-    if(index === 1){
-
-
-    }
+   
     return true;
 
     }
