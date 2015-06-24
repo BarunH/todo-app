@@ -17,6 +17,37 @@ angular.module('starter', ['ionic','firebase'])
     }
   })
 })
+.config(function($stateProvider, $urlRouterProvider) {
+  $urlRouterProvider.otherwise('/');
+
+  $stateProvider
+
+  .state('login', {
+    url: '/',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
+  })
+
+  .state('todos', {
+    url: '/todos',
+    templateUrl: 'templates/todos.html'
+  });
+})
+.factory("Auth",function($firebaseAuth){
+  var baseRef = new Firebase('https://sweltering-inferno-42.firebaseio.com');
+  return $firebaseAuth(baseRef);
+})
+.controller("LoginCtrl",function($scope,Auth){
+
+  $scope.loginWithFaceBook = function(){
+    alert('hello');
+    Auth.$authWithOAuthRedirect("facebook");
+  }
+
+
+})
+
+
 .factory("Todos",function($firebaseArray){
   var baseRef = new Firebase('https://sweltering-inferno-42.firebaseio.com/todos');
   return $firebaseArray(baseRef);
